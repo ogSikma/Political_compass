@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kompas Polityczny</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function positionBubbles() {
+            const container = document.querySelector('.bubble-container');
+            const bubbles = document.querySelectorAll('.category-bubble');
+            //const radius = 360;
+
+            const centerX = container.clientWidth / 2; // Środek kontenera
+            const centerY = container.clientHeight / 2;
+            const radius = Math.min(container.clientWidth, container.clientHeight) / 2 + 45; // Dopasowany promień
+
+            const angleStep = (2 * Math.PI) / bubbles.length;
+
+            bubbles.forEach((bubble, index) => {
+                const angle = angleStep * index;
+                //const x = radius * Math.cos(angle);
+                //const y = radius * Math.sin(angle);
+                const x = centerX + radius * Math.cos(angle) - bubble.clientWidth / 2; // Uwzględniamy wielkość bąbelka
+                const y = centerY + radius * Math.sin(angle) - bubble.clientHeight / 2;
+                
+                bubble.style.position = 'absolute';
+                bubble.style.left = `${x}px`;
+                bubble.style.top = `${y}px`;
+            });
+        }
+
+        function selectCategory(category, element) {
+            document.getElementById('category-input').value = category;
+            document.querySelectorAll('.category-bubble').forEach(bubble => bubble.style.border = 'none');
+            event.target.style.border = '2px solid white';
+        }
+
+        window.onload = function() { positionBubbles(); };
+    </script>
+</head>
+<body>
+    <div class="left-space">
+        <p>Tutaj będzie tekst...</p>
+        <img src="static/images/logo.png" class="logo-img" alt="logo">
+    </div>
+
+    <div class="bubble-container">
+        <div class="center-space">
+            Zdecyduj na który temat chciałbyś się wypowiedzieć.
+            Wybierz jeden z 17 tematów i powiedz lub napisz swój pogląd na dole.
+        </div>        
+        {% for cat in categories %}
+        <div class="category-bubble" onclick="selectCategory('{{ cat }}')" data-category="{{ cat }}">
+            <img src="{{ url_for('static', filename='images/' + cat.split(':')[0]|replace(' ', '_')|replace('/', '_')|replace('\\', '_') + '.png') }}" class="bubble-img" 
+                                alt="{{ cat.split(':')[0] }}">
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="bottom-space">
+        <form method="POST" action="/kompas">
+            <button class="mic_button">🎤</button>
+            <input type="hidden" id="category-input" name="category">
+            <input type="text" name="opinion" placeholder="Co o tym uważasz?" required>
+            <button type="submit" class="send_button">Wyślij</button>
+        </form>
+    </div>
+</body>
+<script>
+    positionBubbles();
+</script>
+</html>
