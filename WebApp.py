@@ -1,13 +1,15 @@
 #conda activate base, cd C:\Users\Sikma\Jupyter\KompasPolityczny, python WebApp.py
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import pandas as pd
 import numpy as np
 import os
 from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 app = Flask(__name__)
+app.secret_key = 'klucz'
 
 #załadowanie datasetów (w CSV) zawierających wypowiedzi, punktację i embeddingi i stworzenie z nich dataframemów
 def CSVload_datasets_embedded(directory):
@@ -22,7 +24,6 @@ def CSVload_datasets_embedded(directory):
         
         globals()[dataset_name] = df
 CSVload_datasets_embedded("datasets_embeddings")
-print(globals().keys())
 
 #załadowanie modelu
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
@@ -33,15 +34,12 @@ def get_embedding(text):
 
 #funkcja realizująca porównanie wypowiedzi użytkownika (embeddingu) z wypowiedziami (embeddingami) z odpowiedniego datasetu i zwracająca ostateczną punktację na skali -1.0 do 1.0
 def get_similarity_upgraded(user_input, df_dataset):
-    # Wektor wypowiedzi użytkownika
     user_embedding = get_embedding(user_input)
     
-    # Oblicz podobieństwo dla każdej wypowiedzi w DataFrame
     df_dataset["similarity"] = df_dataset["embedding"].apply(lambda emb: cosine_similarity([user_embedding], [emb])[0][0])
-    # Posortuj według podobieństwa malejąco
     df_sorted = df_dataset.sort_values(by="similarity", ascending=False)
 
-    top_n = 5  # Weź 5 najbliższych wypowiedzi
+    top_n = 5
     top_similar = df_sorted.head(top_n)
 
     if top_similar.iloc[0]["similarity"] > 0.9:
@@ -58,6 +56,113 @@ def get_similarity_upgraded(user_input, df_dataset):
         
     return avg_score, top_similar[["similarity", "score", "statement"]].values.tolist()
 
+
+pacyfizm_militaryzm = ['bron', 'obronnosc', 'sluzba_wojskowa']
+nacjonalizm_kosmopolityzm = ['obronnosc', 'sluzba_wojskowa', 'armia_ue', 'euro', 'cpk', 'ue', 'imigranci']
+ekologia_industrializm = ['samochody', 'cpk']
+eurofederalizm_eurosceptyzm = ['euro', 'armia_ue', 'ue', 'samochody']
+progresywizm_tradycjonalizm = ['aborcja', 'eutanazja', 'invitro', 'kara_smierci', 'bron']
+socjalizm_liberalizm = ['osiemset', 'zus', 'dochodowy', 'katastralny', 'wdowia']
+regulacjonizm_leseferyzm =  ['osiemset', 'zus', 'dochodowy', 'katastralny', 'wdowia']
+class User:
+
+    def to_dict(self):
+        return self.__dict__
+
+    @staticmethod
+    def from_dict(data):
+        user = User()
+        user.__dict__.update(data)
+        return user
+
+    def __init__(self):
+        self.pacyfizm_militaryzm_score = 0
+        self.pacyfizm_militaryzm_answers = 0
+        
+        self.nacjonalizm_kosmopolityzm_score = 0
+        self.nacjonalizm_kosmopolityzm_answers = 0
+
+        self.ekologia_industrializm_score = 0
+        self.ekologia_industrializm_answers = 0
+
+        self.eurofederalizm_eurosceptyzm_score = 0        
+        self.eurofederalizm_eurosceptyzm_answers = 0
+
+        self.progresywizm_tradycjonalizm_score = 0        
+        self.progresywizm_tradycjonalizm_answers = 0
+
+        self.socjalizm_liberalizm_score = 0        
+        self.socjalizm_liberalizm_answers = 0
+
+        self.regulacjonizm_leseferyzm_score = 0        
+        self.regulacjonizm_leseferyzm_answers = 0
+
+        self.nolan_gospodarka_score = 0
+        self.nolan_gospodarka_answers = 0
+
+        self.nolan_obyczajowe_score = 0
+        self.nolan_obyczajowe_answers = 0
+
+    def add_score_to_compass(self, user_statement, chosen_topic, chosen_dataset):
+        user_score, similiar_results = get_similarity_upgraded(user_statement, chosen_dataset)
+
+        if chosen_topic in socjalizm_liberalizm or chosen_topic in regulacjonizm_leseferyzm:
+            if chosen_topic in socjalizm_liberalizm:
+                self.socjalizm_liberalizm_score += user_score
+                self.socjalizm_liberalizm_answers += 1   
+                
+            if chosen_topic in regulacjonizm_leseferyzm:
+                self.regulacjonizm_leseferyzm_score += user_score
+                self.regulacjonizm_leseferyzm_answers += 1   
+                
+            self.nolan_gospodarka_score += user_score
+            self.nolan_gospodarka_answers += 1
+            
+        else:  
+            if chosen_topic in pacyfizm_militaryzm:       
+                self.pacyfizm_militaryzm_score += user_score
+                self.pacyfizm_militaryzm_answers += 1   
+    
+            if chosen_topic in nacjonalizm_kosmopolityzm:        
+                self.nacjonalizm_kosmopolityzm_score += user_score
+                self.nacjonalizm_kosmopolityzm_answers += 1   
+                
+            if chosen_topic in ekologia_industrializm:        
+                self.ekologia_industrializm_score += user_score
+                self.ekologia_industrializm_answers += 1   
+                
+            if chosen_topic in eurofederalizm_eurosceptyzm:       
+                self.eurofederalizm_eurosceptyzm_score += user_score
+                self.eurofederalizm_eurosceptyzm_answers += 1   
+                
+            if chosen_topic in progresywizm_tradycjonalizm:
+                self.progresywizm_tradycjonalizm_score += user_score
+                self.progresywizm_tradycjonalizm_answers += 1
+                
+            self.nolan_obyczajowe_score += user_score
+            self.nolan_obyczajowe_answers += 1
+
+
+    def display_scores(self):
+        if self.pacyfizm_militaryzm_answers != 0:
+            print(f'Wartość dla pacyfizm-militaryzm wynosi {self.pacyfizm_militaryzm_score/self.pacyfizm_militaryzm_answers}')
+        if self.nacjonalizm_kosmopolityzm_answers != 0:
+            print(f'Wartość dla nacjonalizm-kosmopolityzm wynosi {self.nacjonalizm_kosmopolityzm_score/self.nacjonalizm_kosmopolityzm_answers}')
+        if self.ekologia_industrializm_answers != 0:
+            print(f'Wartość dla ekologia-industrializm wynosi {self.ekologia_industrializm_score/self.ekologia_industrializm_answers}')
+        if self.eurofederalizm_eurosceptyzm_answers != 0:
+            print(f'Wartość dla eurofederalizm-eurosceptyzm wynosi {self.eurofederalizm_eurosceptyzm_score/self.eurofederalizm_eurosceptyzm_answers}')
+        if self.progresywizm_tradycjonalizm_answers != 0:
+            print(f'Wartość dla progresywizm-tradycjonalizm wynosi {self.progresywizm_tradycjonalizm_score/self.progresywizm_tradycjonalizm_answers}')
+        if self.socjalizm_liberalizm_answers != 0:
+            print(f'Wartość dla socjalizm-liberalizm wynosi {self.socjalizm_liberalizm_score/self.socjalizm_liberalizm_answers}')
+        if self.regulacjonizm_leseferyzm_answers != 0:
+            print(f'Wartość dla regulacjonizm-leseferyzm wynosi {self.regulacjonizm_leseferyzm_score/self.regulacjonizm_leseferyzm_answers}')
+        
+        if self.nolan_obyczajowe_answers != 0:
+            print(f'Wartość dla diagramu Nolana konserwatyzm-liberalizm wynosi {self.nolan_obyczajowe_score/self.nolan_obyczajowe_answers}')
+        if self.nolan_gospodarka_answers != 0:
+            print(f'Wartość dla diagramu Nolana socjalizm-wolny rynek wynosi {self.nolan_gospodarka_score/self.nolan_gospodarka_answers}')
 
 CATEGORIES = ['aborcja',
               'armia_ue',
@@ -80,14 +185,33 @@ CATEGORIES2 = ['1','2','3','4']
 
 @app.route('/kompas', methods=['GET', 'POST'])
 def index():
-
     if request.method == 'POST':
+        user = User.from_dict(session['user'])    
+
         opinion = request.form.get('opinion')
+
         category = request.form.get('category')
+        chosen_dataset_name = f'df_dataset_{category}'
+        chosen_dataset = globals()[chosen_dataset_name]
+
+        user.add_score_to_compass(opinion, category, chosen_dataset)
+
+        session['categories'] = [x for x in session['categories'] if x != category]
+        session['user'] = user.to_dict()
 
         print(f"Kategoria: {category}, Opinia: {opinion}")
+        print(user.display_scores())
 
-    return render_template('index.html', categories=CATEGORIES)
+        session['answer_count'] += 1
+        show_button = session['answer_count'] >= 12
+
+        return render_template('index.html', categories=session['categories'], show_button=show_button)
+    
+    session['answer_count'] = 0
+    session['categories'] = CATEGORIES.copy()
+    session['user'] = User().to_dict()
+    return render_template('index.html', categories=session['categories'], show_button=False)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
