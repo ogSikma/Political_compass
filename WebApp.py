@@ -27,6 +27,9 @@ CSVload_datasets_embedded("datasets_embeddings")
 
 #załadowanie modelu
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+print("max_seq_length domyślnie:", model.max_seq_length)
+model.max_seq_length = 512
+print("max_seq_length po zmianie na 512:", model.max_seq_length)
 
 #funkcja do tworzenia embeddingów z tekstu
 def get_embedding(text):
@@ -56,6 +59,16 @@ def get_similarity_upgraded(user_input, df_dataset):
         
     return avg_score, top_similar[["similarity", "score", "statement"]].values.tolist()
 
+def get_similarity_politician(user_input, df_dataset):
+    user_embedding = get_embedding(user_input)
+    
+    df_dataset["similarity"] = df_dataset["embedding"].apply(lambda emb: cosine_similarity([user_embedding], [emb])[0][0])
+    df_sorted = df_dataset.sort_values(by="similarity", ascending=False)
+
+    top_n = 3
+    top_similar = df_sorted.head(top_n)
+
+    return top_similar[["similarity", "politician", "political_club", "utterance"]].values.tolist()
 
 pacyfizm_militaryzm = ['bron', 'obronnosc', 'sluzba_wojskowa']
 nacjonalizm_kosmopolityzm = ['obronnosc', 'sluzba_wojskowa', 'armia_ue', 'euro', 'cpk', 'ue', 'imigranci']
@@ -64,8 +77,8 @@ eurofederalizm_eurosceptyzm = ['euro', 'armia_ue', 'ue', 'samochody']
 progresywizm_tradycjonalizm = ['aborcja', 'eutanazja', 'invitro', 'kara_smierci', 'bron']
 socjalizm_liberalizm = ['osiemset', 'zus', 'dochodowy', 'katastralny', 'wdowia']
 regulacjonizm_leseferyzm =  ['osiemset', 'zus', 'dochodowy', 'katastralny', 'wdowia']
-class User:
 
+class User:
     def to_dict(self):
         return self.__dict__
 
