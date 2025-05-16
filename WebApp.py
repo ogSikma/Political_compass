@@ -1,6 +1,6 @@
 #conda activate base, cd C:\Users\Sikma\Jupyter\KompasPolityczny, python WebApp.py
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 import pandas as pd
 import numpy as np
 import os
@@ -216,7 +216,7 @@ def index():
         print(user.display_scores())
 
         session['answer_count'] += 1
-        show_button = session['answer_count'] >= 12
+        show_button = session['answer_count'] >= 4
 
         return render_template('index.html', categories=session['categories'], show_button=show_button)
     
@@ -224,6 +224,24 @@ def index():
     session['categories'] = CATEGORIES.copy()
     session['user'] = User().to_dict()
     return render_template('index.html', categories=session['categories'], show_button=False)
+
+@app.route('/wyniki')
+def wyniki():
+    user = User.from_dict(session['user'])    
+
+    scores = {
+        'pacyfizm_militaryzm': user.pacyfizm_militaryzm_score / user.pacyfizm_militaryzm_answers if user.pacyfizm_militaryzm_answers else None,
+        'nacjonalizm_kosmopolityzm': user.nacjonalizm_kosmopolityzm_score / user.nacjonalizm_kosmopolityzm_answers if user.nacjonalizm_kosmopolityzm_answers else None,
+        'ekologia_industrializm': user.ekologia_industrializm_score / user.ekologia_industrializm_answers if user.ekologia_industrializm_answers else None,
+        'eurofederalizm_eurosceptyzm': user.eurofederalizm_eurosceptyzm_score / user.eurofederalizm_eurosceptyzm_answers if user.eurofederalizm_eurosceptyzm_answers else None,
+        'progresywizm_tradycjonalizm': user.progresywizm_tradycjonalizm_score / user.progresywizm_tradycjonalizm_answers if user.progresywizm_tradycjonalizm_answers else None,
+        'socjalizm_liberalizm': user.socjalizm_liberalizm_score / user.socjalizm_liberalizm_answers if user.socjalizm_liberalizm_answers else None,
+        'regulacjonizm_eseferyzm': user.regulacjonizm_leseferyzm_score / user.regulacjonizm_leseferyzm_answers if user.regulacjonizm_leseferyzm_answers else None,
+        
+        'konserwatyzm_liberalizm': user.nolan_obyczajowe_score / user.nolan_obyczajowe_answers if user.nolan_obyczajowe_answers else None,
+        'socjalizm_wolny-rynek': user.nolan_gospodarka_score / user.nolan_gospodarka_answers if user.nolan_gospodarka_answers else None
+    }
+    return render_template('wyniki.html', scores = scores)
 
 
 if __name__ == '__main__':

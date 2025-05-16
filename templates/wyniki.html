@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Twoje Wyniki</title>
+</head>
+<body>
+    <h1>Twój Kompas Polityczny</h1>
+    <ul>
+        {% for key, value in scores.items() %}
+            <li>{{ key }}: {{ value if value is not none else "Brak danych" }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/kompas">Wróć na start</a>
+</body>
+</html>
