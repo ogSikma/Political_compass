@@ -2,15 +2,34 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Twoje Wyniki</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wyniki</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_wyniki.css') }}">
+    <style>
+    </style>
 </head>
 <body>
-    <h1>Twój Kompas Polityczny</h1>
-    <ul>
-        {% for key, value in scores.items() %}
-            <li>{{ key }}: {{ value if value is not none else "Brak danych" }}</li>
+    <h2>Twoje wyniki ideologiczne</h2>
+    <div class="scores_container">
+        {% for axis, score in scores.items() %}
+        {%print(axis)%}
+            {% if score is not none %}
+                {% set position = ((score + 1) / 2 * 100) | round(2) %}
+                <div class="axis-container">
+                    <div class="axis-label">{{ axis.replace('_', ' ').title() }}</div>
+                    <div class="axis-bar-wrapper">
+                        <img src="{{ url_for('static', filename='images/'~ axis ~'_left.png') }}" class="axis-icon left-icon" alt="Lewy symbol">
+                        <div class="axis-bar">
+                            <div class="axis-left" style="width: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;">{{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%</div>
+                            <div class="axis-right" style="width: {{ ((score + 1) / 2 * 100) | round(2) }}%;">{{ ((score + 1) / 2 * 100) | round(2) }}</div>
+                            <div class="axis-marker" style="margin-left: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;"></div>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/'~ axis ~'_right.png') }}" class="axis-icon right-icon" alt="Prawy symbol">
+                    </div>
+                </div>
+            {% endif %}
         {% endfor %}
-    </ul>
-    <a href="/kompas">Wróć na start</a>
+    </div>
 </body>
 </html>
+

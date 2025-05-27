@@ -1,0 +1,85 @@
+body { 
+    height: 100vh;
+    margin: 0; 
+    padding: 0;
+    background: radial-gradient(circle at 100%, #85dbeb, #4195da, #458e9b);
+    color: white; 
+    font-family: Arial, sans-serif;
+}
+
+.scores_container{
+    background: radial-gradient(circle at 100%, #a9cbd1, #8ea5b8, #addce4);
+    border: black 2px solid;
+    border-radius: 10px;
+    position: relative;
+    width: 50%;
+    left: 50%;
+    transform: translate(-50%);  
+}
+
+.axis-container {
+    margin: 15px 0;
+}
+
+.axis-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.axis-bar-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.axis-icon {
+    width: 45px;
+    height: 45px;
+    position: absolute;
+    z-index: 2;
+    background-color: #2ecc71;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+
+.left-icon {
+    margin-left: 13%;
+}
+
+.right-icon {
+    margin-left: 83%;
+}
+
+.axis-bar {
+    position: relative;
+    display: flex;
+    height: 30px;
+    width: 70%;
+    border: 2px solid #000;
+    border-radius: 25px;
+    overflow: hidden;
+    left: 50%;          
+    transform: translate(-50%);  
+    z-index: 1;
+    text-align: center;
+}
+
+.axis-left {
+    background-color: #e74c3c;
+    height: 100%;
+}
+
+.axis-right {
+    background-color: #2ecc71;
+    height: 100%;
+}
+
+.axis-marker {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 30px;
+    background: black;
+}
+        
