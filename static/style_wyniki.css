@@ -2,34 +2,60 @@ body {
     height: 100vh;
     margin: 0; 
     padding: 0;
-    background: radial-gradient(circle at 100%, #85dbeb, #4195da, #458e9b);
+    background: radial-gradient(circle at 100%, #85dbeb, #4195da, #458e9b);    
     color: white; 
-    font-family: Arial, sans-serif;
+    font-family: Copperplate;
+}
+
+.results {
+  width: 80%;
+  margin: 0 auto; /* Wycentrowanie wrappera */
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem; /* Odstęp między kontenerami */
+  flex-wrap: wrap; /* Działa responsywnie na małych ekranach */
 }
 
 .scores_container{
-    background: radial-gradient(circle at 100%, #a9cbd1, #8ea5b8, #addce4);
-    border: black 2px solid;
-    border-radius: 10px;
-    position: relative;
-    width: 50%;
-    left: 50%;
-    transform: translate(-50%);  
-}
+  background: radial-gradient(circle at 100%, #0a8292 0%, transparent 50%, #137e48 100%),
+              radial-gradient(circle at 0%, transparent, #ddd3d3 50%, #0a8292 100%);
+  border: black 2px solid;
+  border-radius: 10px;
+  width: 50%; /* Dwie kolumny z odstępem */
+  min-width: 300px;
+  box-sizing: border-box;
+}        
+
 
 .axis-container {
     margin: 15px 0;
 }
 
 .axis-label {
+    color: rgba(255, 255, 255, 0.6); 
     font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 1vw;
+    letter-spacing: 0.3vw;
+    text-align: justify;
+    margin-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.axis-label span::after {
+    content: "";
+    display: inline-block;
+    width: 100%;
+    height: 0;           /* <- niech nie zajmuje miejsca */
+    font-size: 0;        /* <- niech nie ma "linii tekstowej" */
+    line-height: 0;      /* <- niech nie wpływa na spacing */
 }
 
 .axis-bar-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 1%;
     width: 100%;
 }
 
@@ -38,23 +64,24 @@ body {
     height: 45px;
     position: absolute;
     z-index: 2;
-    background-color: #2ecc71;
     border: 2px solid #000;
     border-radius: 10px;
 }
 
 .left-icon {
-    margin-left: 13%;
+    margin-left: 11%;
+    background-color: #137e48;
 }
 
 .right-icon {
-    margin-left: 83%;
+    margin-left: 82%;
+    background-color: #0a8292;
 }
 
 .axis-bar {
     position: relative;
     display: flex;
-    height: 30px;
+    height: 25px;
     width: 70%;
     border: 2px solid #000;
     border-radius: 25px;
@@ -63,15 +90,16 @@ body {
     transform: translate(-50%);  
     z-index: 1;
     text-align: center;
+    font-size: 1vw;
 }
 
 .axis-left {
-    background-color: #e74c3c;
+    background-color: #137e48;
     height: 100%;
 }
 
 .axis-right {
-    background-color: #2ecc71;
+    background-color: #0a8292;
     height: 100%;
 }
 
@@ -82,4 +110,35 @@ body {
     height: 30px;
     background: black;
 }
-        
+
+.nolan_container {
+  background: radial-gradient(circle at 100%, #9fa8a8, #c3cfcf, #666868);
+  border: black 2px solid;
+  border-radius: 10px;
+  width: 40%; /* Dwie kolumny z odstępem */
+  box-sizing: border-box;
+}
+
+.nolan-chart {
+    position: relative;
+    width: 90%;
+    height: width;
+    left: 5%;              
+}
+
+.nolan-chart img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.nolan-point {
+    position: absolute;
+    width: 0.5vw;
+    height: 0.5vw;
+    background-color: red;
+    border: 0.2vw solid white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}

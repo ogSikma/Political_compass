@@ -10,25 +10,46 @@
 </head>
 <body>
     <h2>Twoje wyniki ideologiczne</h2>
-    <div class="scores_container">
-        {% for axis, score in scores.items() %}
-        {%print(axis)%}
-            {% if score is not none %}
-                {% set position = ((score + 1) / 2 * 100) | round(2) %}
-                <div class="axis-container">
-                    <div class="axis-label">{{ axis.replace('_', ' ').title() }}</div>
-                    <div class="axis-bar-wrapper">
-                        <img src="{{ url_for('static', filename='images/'~ axis ~'_left.png') }}" class="axis-icon left-icon" alt="Lewy symbol">
-                        <div class="axis-bar">
-                            <div class="axis-left" style="width: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;">{{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%</div>
-                            <div class="axis-right" style="width: {{ ((score + 1) / 2 * 100) | round(2) }}%;">{{ ((score + 1) / 2 * 100) | round(2) }}</div>
-                            <div class="axis-marker" style="margin-left: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;"></div>
+    <div class="results">
+        <div class="scores_container">
+            {% for axis, score in scores.items() %}
+                {% if score is not none %}
+                    {% set position = ((score + 1) / 2 * 100) | round(2) %}
+                    <div class="axis-container">
+                        <div class="axis-bar-wrapper">
+                            <img src="{{ url_for('static', filename='images/wyniki_icons/white/'~ axis ~'_left.png') }}" class="axis-icon left-icon" alt="Lewy symbol">
+                            <div class="axis-bar">
+                                {% if score|abs < 0.6 %}
+                                <div class="axis-left" style="width: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;">{{ (100 - ((score + 1) / 2 * 100)) | round(1) }}%</div>
+                                <div class="axis-right" style="width: {{ ((score + 1) / 2 * 100) | round(2) }}%;">{{ ((score + 1) / 2 * 100) | round(1) }}%</div>
+                                {% else %}
+                                    {% if score > 0 %}
+                                    <div class="axis-left" style="width: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;"></div>
+                                    <div class="axis-right" style="width: {{ ((score + 1) / 2 * 100) | round(2) }}%;">{{ ((score + 1) / 2 * 100) | round(1) }}%</div>
+                                    {% else %}
+                                    <div class="axis-left" style="width: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;">{{ (100 - ((score + 1) / 2 * 100)) | round(1) }}%</div>
+                                    <div class="axis-right" style="width: {{ ((score + 1) / 2 * 100) | round(2) }}%;"></div>
+                                    {% endif %}                          
+                                {% endif %}
+                                <div class="axis-marker" style="margin-left: {{ (100 - ((score + 1) / 2 * 100)) | round(2) }}%;"></div>
+                            </div>
+                            <img src="{{ url_for('static', filename='images/wyniki_icons/white/'~ axis ~'_right.png') }}" class="axis-icon right-icon" alt="Prawy symbol">
                         </div>
-                        <img src="{{ url_for('static', filename='images/'~ axis ~'_right.png') }}" class="axis-icon right-icon" alt="Prawy symbol">
+                        <div class="axis-label"><span>{{ axis.replace('_', ' ').upper() }}</span></div>
                     </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="nolan_container">
+            <div class="nolan-chart">
+                <img src="{{ url_for('static', filename='images/nolanchart.png') }}" alt="Nolan Chart">
+                {% if nolan['socjalizm_wolny-rynek'] is not none and nolan['konserwatyzm_liberalizm'] is not none %}
+                    {% set x = ((nolan['socjalizm_wolny-rynek'] + 1) / 2 * 100) %}
+                    {% set y = ((1 - nolan['konserwatyzm_liberalizm']) / 2 * 100) %}
+                    <div class="nolan-point" style="left: {{ x }}%; top: {{ y }}%;"></div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </body>
 </html>

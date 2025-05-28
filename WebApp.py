@@ -75,8 +75,8 @@ nacjonalizm_kosmopolityzm = ['obronnosc', 'sluzba_wojskowa', 'armia_ue', 'euro',
 ekologia_industrializm = ['samochody', 'cpk']
 eurofederalizm_eurosceptyzm = ['euro', 'armia_ue', 'ue', 'samochody']
 progresywizm_tradycjonalizm = ['aborcja', 'eutanazja', 'invitro', 'kara_smierci', 'bron']
-socjalizm_liberalizm = ['osiemset', 'zus', 'dochodowy', 'katastralny', 'wdowia']
-regulacjonizm_leseferyzm =  ['osiemset', 'zus', 'dochodowy', 'katastralny', 'wdowia']
+solidaryzm_liberalizm = ['osiemset', 'zus', 'wdowia']
+interwencjonizm_leseferyzm =  ['zus', 'dochodowy', 'katastralny']
 
 class User:
     def to_dict(self):
@@ -104,11 +104,11 @@ class User:
         self.progresywizm_tradycjonalizm_score = 0        
         self.progresywizm_tradycjonalizm_answers = 0
 
-        self.socjalizm_liberalizm_score = 0        
-        self.socjalizm_liberalizm_answers = 0
+        self.solidaryzm_liberalizm_score = 0        
+        self.solidaryzm_liberalizm_answers = 0
 
-        self.regulacjonizm_leseferyzm_score = 0        
-        self.regulacjonizm_leseferyzm_answers = 0
+        self.interwencjonizm_leseferyzm_score = 0        
+        self.interwencjonizm_leseferyzm_answers = 0
 
         self.nolan_gospodarka_score = 0
         self.nolan_gospodarka_answers = 0
@@ -119,14 +119,14 @@ class User:
     def add_score_to_compass(self, user_statement, chosen_topic, chosen_dataset):
         user_score, similiar_results = get_similarity_upgraded(user_statement, chosen_dataset)
 
-        if chosen_topic in socjalizm_liberalizm or chosen_topic in regulacjonizm_leseferyzm:
-            if chosen_topic in socjalizm_liberalizm:
-                self.socjalizm_liberalizm_score += user_score
-                self.socjalizm_liberalizm_answers += 1   
+        if chosen_topic in solidaryzm_liberalizm or chosen_topic in interwencjonizm_leseferyzm:
+            if chosen_topic in solidaryzm_liberalizm:
+                self.solidaryzm_liberalizm_score += user_score
+                self.solidaryzm_liberalizm_answers += 1   
                 
-            if chosen_topic in regulacjonizm_leseferyzm:
-                self.regulacjonizm_leseferyzm_score += user_score
-                self.regulacjonizm_leseferyzm_answers += 1   
+            if chosen_topic in interwencjonizm_leseferyzm:
+                self.interwencjonizm_leseferyzm_score += user_score
+                self.interwencjonizm_leseferyzm_answers += 1   
                 
             self.nolan_gospodarka_score += user_score
             self.nolan_gospodarka_answers += 1
@@ -167,10 +167,10 @@ class User:
             print(f'Wartość dla eurofederalizm-eurosceptyzm wynosi {self.eurofederalizm_eurosceptyzm_score/self.eurofederalizm_eurosceptyzm_answers}')
         if self.progresywizm_tradycjonalizm_answers != 0:
             print(f'Wartość dla progresywizm-tradycjonalizm wynosi {self.progresywizm_tradycjonalizm_score/self.progresywizm_tradycjonalizm_answers}')
-        if self.socjalizm_liberalizm_answers != 0:
-            print(f'Wartość dla socjalizm-liberalizm wynosi {self.socjalizm_liberalizm_score/self.socjalizm_liberalizm_answers}')
-        if self.regulacjonizm_leseferyzm_answers != 0:
-            print(f'Wartość dla regulacjonizm-leseferyzm wynosi {self.regulacjonizm_leseferyzm_score/self.regulacjonizm_leseferyzm_answers}')
+        if self.solidaryzm_liberalizm_answers != 0:
+            print(f'Wartość dla socjalizm-liberalizm wynosi {self.solidaryzm_liberalizm_score/self.solidaryzm_liberalizm_answers}')
+        if self.interwencjonizm_leseferyzm_answers != 0:
+            print(f'Wartość dla regulacjonizm-leseferyzm wynosi {self.interwencjonizm_leseferyzm_score/self.interwencjonizm_leseferyzm_answers}')
         
         if self.nolan_obyczajowe_answers != 0:
             print(f'Wartość dla diagramu Nolana konserwatyzm-liberalizm wynosi {self.nolan_obyczajowe_score/self.nolan_obyczajowe_answers}')
@@ -235,13 +235,16 @@ def wyniki():
         'ekologia_industrializm': user.ekologia_industrializm_score / user.ekologia_industrializm_answers if user.ekologia_industrializm_answers else None,
         'eurofederalizm_eurosceptyzm': user.eurofederalizm_eurosceptyzm_score / user.eurofederalizm_eurosceptyzm_answers if user.eurofederalizm_eurosceptyzm_answers else None,
         'progresywizm_tradycjonalizm': user.progresywizm_tradycjonalizm_score / user.progresywizm_tradycjonalizm_answers if user.progresywizm_tradycjonalizm_answers else None,
-        'socjalizm_liberalizm': user.socjalizm_liberalizm_score / user.socjalizm_liberalizm_answers if user.socjalizm_liberalizm_answers else None,
-        'regulacjonizm_eseferyzm': user.regulacjonizm_leseferyzm_score / user.regulacjonizm_leseferyzm_answers if user.regulacjonizm_leseferyzm_answers else None,
-        
+        'solidaryzm_liberalizm': user.solidaryzm_liberalizm_score / user.solidaryzm_liberalizm_answers if user.solidaryzm_liberalizm_answers else None,
+        'regulacjonizm_leseferyzm': user.interwencjonizm_leseferyzm_score / user.interwencjonizm_leseferyzm_answers if user.interwencjonizm_leseferyzm_answers else None,
+    }
+
+    nolan = {  
         'konserwatyzm_liberalizm': user.nolan_obyczajowe_score / user.nolan_obyczajowe_answers if user.nolan_obyczajowe_answers else None,
         'socjalizm_wolny-rynek': user.nolan_gospodarka_score / user.nolan_gospodarka_answers if user.nolan_gospodarka_answers else None
     }
-    return render_template('wyniki.html', scores = scores)
+
+    return render_template('wyniki.html', scores = scores, nolan = nolan)
 
 
 if __name__ == '__main__':
