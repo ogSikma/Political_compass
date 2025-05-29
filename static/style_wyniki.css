@@ -8,24 +8,32 @@ body {
 }
 
 .results {
-  width: 80%;
-  margin: 0 auto; /* Wycentrowanie wrappera */
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem; /* Odstęp między kontenerami */
-  flex-wrap: wrap; /* Działa responsywnie na małych ekranach */
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.userChart{
+    width: 50%;
+    margin: 0 auto;
+    background: radial-gradient(circle at 100%, #b9b6ab 10%, #b1b19f 80%);
+    border: rgba(0, 0, 0, 0.4) 4px solid;
+    border-radius: 10px;
+    padding: 5px;
 }
 
 .scores_container{
-  background: radial-gradient(circle at 100%, #0a8292 0%, transparent 50%, #137e48 100%),
+    background: radial-gradient(circle at 100%, #0a8292 0%, transparent 50%, #137e48 100%),
               radial-gradient(circle at 0%, transparent, #ddd3d3 50%, #0a8292 100%);
-  border: black 2px solid;
-  border-radius: 10px;
-  width: 50%; /* Dwie kolumny z odstępem */
-  min-width: 300px;
-  box-sizing: border-box;
+    border: rgba(0, 0, 0, 0.4) 4px solid;
+    border-radius: 10px;
+    width: 50%;
+    min-width: 300px;
+    box-sizing: border-box;
 }        
-
 
 .axis-container {
     margin: 15px 0;
@@ -112,11 +120,12 @@ body {
 }
 
 .nolan_container {
-  background: radial-gradient(circle at 100%, #9fa8a8, #c3cfcf, #666868);
-  border: black 2px solid;
-  border-radius: 10px;
-  width: 40%; /* Dwie kolumny z odstępem */
-  box-sizing: border-box;
+    background: radial-gradient(circle at 100%, #9fa8a8, #c3cfcf, #666868);
+    border: rgba(0, 0, 0, 0.4) 4px solid;
+    border-radius: 10px;
+    width: 40%;
+    box-sizing: border-box;
+    padding: 5px;
 }
 
 .nolan-chart {

@@ -5,11 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>wyniki</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style_wyniki.css') }}">
-    <style>
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        function createUserChart(labels, data) {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const chartConfig = {
+            type: 'bar',
+            data: {
+            labels: labels,
+            datasets: [{
+                label: 'Podobieństwo (%)',
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors.map(color => color.replace('0.8', '0.95')),
+                borderWidth: 2
+            }]
+            },
+            options: {
+            indexAxis: 'x',
+            scales: {
+                y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {stepSize: 25, color: 'white', font: {family: 'Courier New', size: 12, style: 'italic'}}
+                },
+                x: {
+                ticks: {display: false}
+                }
+            },
+            plugins: {
+                tooltip: {
+                callbacks: {label: (ctx) => 'Podobieństwo: ' + ctx.raw.toFixed(1) + '%'}
+                },
+                legend: {display: false}
+            }
+            }
+        };
+        new Chart(ctx, chartConfig);
+        }
+    </script>
+
 </head>
-<body>
-    <h2>Twoje wyniki ideologiczne</h2>
+<body>    
+    <h1 style="text-align: center;">Twoje wyniki ideologiczne</h1>
     <div class="results">
         <div class="scores_container">
             {% for axis, score in scores.items() %}
@@ -51,6 +90,31 @@
             </div>
         </div>
     </div>
+    <h1 style="text-align: center;">Twoje podobieństwo z politykami</h1>
+    <div class="userChart">
+        <canvas id="myChart" width="600" height="300"></canvas>
+        <script>
+            const labels = {{ labels | tojson }};
+            const percentages = {{ percentages | tojson }};
+            const parties = {{ parties | tojson }};
+            const colorsByParty = {
+            'PiS': 'rgba(49, 136, 212, 0.8)',
+            'KO': 'rgba(235, 180, 30, 0.8)',
+            'Razem': 'rgba(171, 29, 95, 0.8)',
+            'Lewica': 'rgba(224, 29, 68, 0.8)',
+            'Konfederacja': 'rgba(48, 76, 255, 0.8)',
+            'PSL-TD': 'rgba(67, 201, 22, 0.8)',
+            'Polska2050-TD': 'rgba(230, 220, 41, 0.8)',            
+            'Republikanie': 'rgba(80, 77, 143, 0.8)',
+            'niez.': 'rgba(51, 51, 59, 0.8)',
+            'Nieznana partia': 'rgba(51, 51, 59, 0.8)',
+            'Default': 'rgba(51, 51, 59, 0.8)'
+            };
+            const backgroundColors = parties.map(p => colorsByParty[p] || colorsByParty['Default']);
+            createUserChart(labels, percentages);
+        </script>
+    </div>
+
 </body>
 </html>
 
