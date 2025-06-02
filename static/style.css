@@ -5,16 +5,20 @@ body {
     /*background: radial-gradient(circle, #73cddd, #4195da);*/
     background: radial-gradient(circle at 100%, #85dbeb, #4195da, #458e9b);
     color: white; 
-    font-family: Arial, sans-serif;
+    font-family: 'Courier New', monospace;
 }
 
 .left-space {
     position: fixed;
-    width: 20vw;
-    height: 60vh;
+    width: 22vw;
+    height: 50vh;
     top: 50%;
     transform: translate(0,-50%);
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 10%;
+    text-align: center;
+    font-size: 0.9vw;
+    border: 2px solid rgba(255, 255, 255, 0.6);
 }
 
 .bubble-container{
@@ -56,19 +60,19 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
-    font-family: 'Courier New', monospace;
+    font-size: 1.2vw;
 }
 
 .bottom-space {
     position: absolute;
-    bottom: 4vh;
-    width: 100%;
+    bottom: 1vw;
+    width: 90%;         
     text-align: center;
+    left: 5%;          
 }
 
 input {
-    width: 90%;
+    width: 80%;
     border: 3px solid transparent;
     border-top: none;
     border-image-source: radial-gradient(circle, #3084ca 2%, transparent 90%);
@@ -90,30 +94,29 @@ input::placeholder
 }
 
 .mic_button {
-    width: 4%;
-    left: 1vw;
-    padding: 5px;
-    font-size: 1rem;
-    background: rgb(65, 149, 218, 0.5);
-    border: none;
+    width: 7vw;
+    font-size: 1vw;
+    background: rgba(55, 134, 199, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
+    color: white;
+    padding: 4px;
+    font-family: 'Courier New', monospace;
 }
 
 .send_button {
-    width: 4%;
-    padding: 7px;
-    font-size: 18px;
-    background: rgb(65, 149, 218, 0.5);
-    border: none;
+    width: 5vw;
+    font-size: 1vw;
+    background: rgba(55, 134, 199, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
     color: white;
+    padding: 4px;
     font-family: 'Courier New', monospace;
-
 }
 
 .logo-img {
-    transform: translate(10%,20%); 
-    width: 75%;
+    width: 50%;
     object-fit: cover; /* Zapewnia, że obrazek dobrze wypełnia okrąg */
 }
 

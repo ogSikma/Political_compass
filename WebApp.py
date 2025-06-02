@@ -3,6 +3,7 @@
 from flask import Flask, render_template, request, session, redirect
 import pandas as pd
 import numpy as np
+import math
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -33,19 +34,29 @@ def CSVload_datasets_embedded(directory):
         dataset_name = f'df_{filename.replace("_embeddings.csv", "")}'
         
         globals()[dataset_name] = df
-CSVload_datasets_embedded("datasets_embeddings")
+CSVload_datasets_embedded("datasets_embeddings_minilm12")
+# POLITYCY --------------------------------------
 df_politycy = pd.read_csv('politycy_embeddings_minilm12.csv', encoding='utf-8', sep=';')
 df_politycy["embedding"] = df_politycy["embedding"].apply(lambda x: np.array(list(map(float, x.split(',')))))
 
 #załadowanie modelu
+#model = SentenceTransformer('all-MiniLM-L6-v2')
+#model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
+#model = SentenceTransformer('intfloat/multilingual-e5-small')
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+
+print(model.get_sentence_embedding_dimension())
 print("max_seq_length domyślnie:", model.max_seq_length)
-model.max_seq_length = 512
-print("max_seq_length po zmianie na 512:", model.max_seq_length)
+#model.max_seq_length = 512
+#print("max_seq_length po zmianie na 512:", model.max_seq_length)
 
 #funkcja do tworzenia embeddingów z tekstu
 def get_embedding(text):
     return model.encode(text)
+
+#funkcja wzmacniająca wynik dla wyższych wartości
+def amplify(x, scale=1):
+    return math.tanh(x * scale) / math.tanh(scale)
 
 #funkcja realizująca porównanie wypowiedzi użytkownika (embeddingu) z wypowiedziami (embeddingami) z odpowiedniego datasetu i zwracająca ostateczną punktację na skali -1.0 do 1.0
 def get_similarity_upgraded(user_input, df_dataset):
@@ -68,34 +79,16 @@ def get_similarity_upgraded(user_input, df_dataset):
         df_dataset_filtered = df_dataset_filtered.sort_values(by="similarity", ascending=False)
         top_similar = df_dataset_filtered.head(top_n)
         avg_score = top_similar["score"].mean()
+        avg_score = amplify(avg_score)
         
     return avg_score, top_similar[["similarity", "score", "statement"]].values.tolist()
 
 def get_similarity_politicians(user_input, df_dataset):
     user_embedding = get_embedding(user_input)
-
     df_dataset["similarity"] = df_dataset["embedding"].apply(lambda emb: cosine_similarity([user_embedding], [emb])[0][0])
-
     max_similarity_per_politician = df_dataset.groupby("politician")["similarity"].max()
 
     return max_similarity_per_politician.to_dict()
-
-#def create_barplot(labels, percentages):
-    plt.figure(figsize=(10,6))
-    ax = sns.barplot(x=labels, y=percentages, palette="viridis")
-
-    ax.set_ylim(0,100)
-    for p in ax.patches:
-        height = p.get_height()
-        ax.text(p.get_x() + p.get_width()/2., height + 0.05,f'{height:.1f}%', ha='center', va='bottom')
-
-    plt.xticks(rotation=45, ha='right')
-    plt.title('Top 10 polityków wg podobieństwa wypowiedzi')
-    plt.tight_layout()
-
-    save_path = os.path.join('static/images', 'user_chart.png')
-    plt.savefig(save_path)
-    plt.close()
 
 pacyfizm_militaryzm = ['bron', 'obronnosc', 'sluzba_wojskowa']
 nacjonalizm_kosmopolityzm = ['obronnosc', 'sluzba_wojskowa', 'armia_ue', 'euro', 'cpk', 'ue', 'imigranci']
@@ -116,6 +109,7 @@ class User:
         return user
 
     def __init__(self):
+        # POLITYCY --------------------------------------
         self.politicians_dict = {name: [0, club] for name, club in zip(df_politycy['politician'], df_politycy['political_club'])}
 
         self.pacyfizm_militaryzm_score = 0
@@ -248,6 +242,7 @@ def index():
         chosen_dataset = globals()[chosen_dataset_name]
 
         user.add_score_to_compass(opinion, category, chosen_dataset)
+        # POLITYCY --------------------------------------
         user.add_politicians_similarity(opinion)
 
         session['categories'] = [x for x in session['categories'] if x != category]
@@ -287,6 +282,7 @@ def wyniki():
         'socjalizm_wolny-rynek': user.nolan_gospodarka_score / user.nolan_gospodarka_answers if user.nolan_gospodarka_answers else None
     }
 
+    # POLITYCY --------------------------------------
     politicians = sorted(user.politicians_dict.items(), key=lambda x: x[1][0], reverse=True)[:10]
     names = [i[0] for i in politicians]
     similarities = [(i[1][0]/session['answer_count'])*100 for i in politicians]
@@ -295,6 +291,7 @@ def wyniki():
     #create_barplot(nazwiska,podobienstwa)
 
     return render_template('wyniki.html', scores=scores, nolan=nolan, labels=labels, percentages=similarities, parties=parties)
+
 
 
 if __name__ == '__main__':
