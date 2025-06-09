@@ -54,7 +54,6 @@ body {
     top: 50%;           
     left: 50%;          
     transform: translate(-50%, -50%); 
-    background: radial-gradient(circle, #22db22 40%);
     color: white;
     text-align: center;
     display: flex;

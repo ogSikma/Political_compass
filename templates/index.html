@@ -12,7 +12,10 @@
 
             const centerX = container.clientWidth / 2; // Środek kontenera
             const centerY = container.clientHeight / 2;
-            const radius = Math.min(container.clientWidth, container.clientHeight) / 2 + 45; // Dopasowany promień
+            const radius = Math.min(container.clientWidth, container.clientHeight) / 2+ 20; // Dopasowany promień
+
+            //const rect = container.getBoundingClientRect();
+            //const radius = Math.min(rect.width, rect.height) / 2;
 
             const angleStep = (2 * Math.PI) / bubbles.length;
 
@@ -28,23 +31,23 @@
         }
 
         const categoryDescriptions = {
-              'aborcja': 'Co sądzisz o <b>aborcji</b>?<br>czy powinna być dozwolona w każdym przypadku?<br>a może pod jakimś wyjątkiem?<br>to sprawa kobiety, czy jednak nie tylko?',
-              'armia_ue': 'hgghf',
-              'bron': 'uytyu',
-              'cpk': '',
-              'dochodowy': '',
-              'euro': '',
-              'eutanazja': '',
-              'imigranci': '',
-              'invitro': '',
-              'kara_smierci': '',
-              'katastralny': '',
-              'osiemset': '',
-              'samochody': '',
-              'sluzba_wojskowa': '',
-              'ue': '',
-              'wdowia': '',
-              'zus': '',
+              'aborcja': "Co sądzisz o <br><b>legalizacji aborcji</b>?<br><br><p class='opis'>Powinna być dozwolona?<br>Może pod jakimś wyjątkiem?<br>Jest to sprawa kobiety, czy nie tylko?</p>",
+              'armia_ue': "Co sądzisz o <br><b>wspólnej armii Unii Europejskiej</b>?<br><br><p class='opis'>Czy byloby to dobre dla Polski?<br>Jest zagrożeniem suwerenności?<br>A może gwarancją bezpieczeństwa?</p>",
+              'bron': "Co sądzisz o <br><b>ulatwieniu posiadania broni przez obywateli</b>?<br><br><p class='opis'>Czy aktualne przepisy są wystarczające?<br>A może regulacje powinny być większe?<br>Czy jednak dostęp powinien być prostszy?</p>",
+              'cpk': "Co sądzisz o <br><b>projekcie CPK</b>?<br><br><p class='opis'>Szansa dla Polski czy stracone pieniądze?<br>Za dużo niepewności? Braku kompetencji?<br>Czy może idealny moment i potrzebna inwestycja?</p>",
+              'dochodowy': "Co sądzisz o <br><b>podatku dochodowym</b>?<br><br><p class='opis'>Kradzież ciężko zarobionych pieniędzy?<br>Czy sprawiedliwe źródlo dochodu skarbu państwa?</p>",
+              'euro': "Co sądzisz o <br><b>wprowadzeniu waluty Euro</b>?<br><br><p class='opis'>Ważny temat do podjęcia dyskusji?<br>Bezpieczna i stabilna waluta?<br>Czy utrata niezależności i wyższe ceny?</p>",
+              'eutanazja': "Co sądzisz o <br><b>legalizacji eutanazji</b>?<br><br><p class='opis'>Potrzebna inicjatywa w ślad za Zachodem?<br>Niemoralne podejście i pole do nadużyć?<br>Czy może danie wyboru godnego odejścia?</p>",
+              'imigranci': "Co sądzisz o<br> <b>imigrantach z bialoruskiej granicy</b>?<br><br><p class='opis'>Powinniśmy ich wpuścić?<br>Duże ryzyko i zagrożenie?<br>Czy ważniejsza jest empatia i prawa czlowieka?<br>A może to wszystko to wojna hybrydowa i się odgradzać?</p>",
+              'invitro': "Co sądzisz o <br><b>in-vitro</b>?<br><br><p class='opis'>Dobre rozwiązanie pomocne dla niektórych par?<br>Czy jednak niemoralne podejście wbrew naturze?<br>Powinno się refundować albo finansować?</p>",
+              'kara_smierci': "Co sądzisz o <br><b>karze śmierci</b>?<br><br><p class='opis'>Polska powinna do niej wrócić?<br>Przeżytek niezgodny z cywilizacją XXI wieku?<br>Czy może sluszne rozwiązanie?<br>A może tylko za pewne przestępstwa?</p>",
+              'katastralny': "Co sądzisz o <br><b>podatku katastralnym</b>?<br><br><p class='opis'>Polska powinna go wprowadzić?<br>Potrzebny cios w bogate osoby, flipperów i developerów?<br>Czy obawa uderzenia w zwyklych obywateli?</p>",
+              'osiemset': "Co sądzisz o <br><b>świadczeniu 800+</b>?<br><br><p class='opis'>Potrzebne świadczenie ratujące demografię?<br>Strata pieniędzy nieprzynosząca rezultatów?<br>Czy jednak duże ukojenie dla biedniejszych rodzin?</p>",
+              'samochody': "Co sądzisz o <br><b>zakazie samochodów przez UE</b>?<br><br><p class='opis'>Dobry pomysl ratujący planetę?<br>Czy ograniczanie wolności jednostki i cios w biednych<br>Powinniśmy to odrzucić czy realizować program Unii Europejskiej?</p>",
+              'sluzba_wojskowa': "Co sądzisz o <br><b>obowiązkowej slużbie wojskowej</b>?<br><br><p class='opis'><br><br></p>",
+              'ue': "Jaki kierunek powinna obrać Polska względem <br><b>Unii Europejskiej</b>?<br><br><p class='opis'><br><br></p>",
+              'wdowia': "Co sądzisz o <br><b>rencie wdowiej</b>?<br><br><p class='opis'><br><br></p>",
+              'zus': "Co sądzisz o <br><b>ZUSie i prywatyzacji świadczeń socjalnych i emerytalnych</b>?<br><br><p class='opis'><br><br></p>"
         };
 
         function selectCategory(category, element) {
@@ -62,13 +65,18 @@
 </head>
 <body>
     <div class="left-space">
-        <p>Tutaj będzie tekst...</p>
+        <p>
+            3 zasady aby uzyskać dobre wyniki: </br></br>
+            1. Postaraj się odpowiedzieć w formie: </br> "<b>Pogląd</b>, ponieważ <b>argumentacja"</b></br></br>
+            2. Spróbuj zmieścić się w 1-2 zdaniach</br></br>
+            3. Nie bądź złośliwy dla kompasu
+        </p>
         <img src="static/images/logo.png" class="logo-img" alt="logo">
     </div>
 
     <div class="bubble-container">
         <div class="center-space" id="center-space">
-            <p id="category-description">Wybierz jeden temat spośród siedemnastu i powiedz jaki masz pogląd</p>
+            <p id="category-description">Wybierz spośród siedemnastu tematów i powiedz o swoich poglądach</p>
             <button id="show-button" class="show-button" 
             {% if show_button %}
                 style="display: block;"
@@ -87,12 +95,50 @@
 
     <div class="bottom-space">
         <form method="POST" action="/kompas">
-            <button class="mic_button">🎤</button>
+            <button type="button" class="mic_button">Powiedz 🎤</button>
             <input type="hidden" id="category-input" name="category">
-            <input type="text" name="opinion" placeholder="Co o tym uważasz?" required>
+            <input type="text" id="opinion-input" name="opinion" placeholder="Co o tym uważasz?" required>
             <button type="submit" class="send_button">Wyślij</button>
         </form>
     </div>
+<script>
+document.querySelector('.mic_button').addEventListener('click', (event) => {
+    event.preventDefault();  // zatrzymaj wysłanie formularza
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('Twoja przeglądarka nie wspiera rozpoznawania mowy');
+        return;
+    }
+
+    console.log('Startujemy rozpoznawanie mowy...');
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pl-PL'; // język polski
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        console.log('Rozpoznano:', transcript);
+        document.getElementById('opinion-input').value = document.getElementById('opinion-input').value + transcript;
+        // odkomentuj, jeśli chcesz automatycznie wysłać formularz
+        // document.getElementById('opinion-form').submit();
+    };
+
+    recognition.onerror = (event) => {
+        alert('Błąd rozpoznawania mowy: ' + event.error);
+        console.error('Błąd rozpoznawania:', event.error);
+    };
+
+    recognition.onspeechend = () => {
+        console.log('Rozpoznawanie zakończone.');
+        recognition.stop();
+    };
+});
+</script>
+
 </body>
 <script>
     positionBubbles();

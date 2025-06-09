@@ -1,6 +1,6 @@
 #conda activate base, cd C:\Users\Sikma\Jupyter\KompasPolityczny, python WebApp.py
 
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, jsonify
 import pandas as pd
 import numpy as np
 import math
@@ -34,16 +34,16 @@ def CSVload_datasets_embedded(directory):
         dataset_name = f'df_{filename.replace("_embeddings.csv", "")}'
         
         globals()[dataset_name] = df
-CSVload_datasets_embedded("datasets_embeddings_minilm12")
+CSVload_datasets_embedded("datasets_embeddings_stsbxlmr")
 # POLITYCY --------------------------------------
-df_politycy = pd.read_csv('politycy_embeddings_minilm12.csv', encoding='utf-8', sep=';')
+df_politycy = pd.read_csv('politycy_embeddings_stsbxlmr.csv', encoding='utf-8', sep=';')
 df_politycy["embedding"] = df_politycy["embedding"].apply(lambda x: np.array(list(map(float, x.split(',')))))
 
 #załadowanie modelu
-#model = SentenceTransformer('all-MiniLM-L6-v2')
-#model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
+model = SentenceTransformer('sentence-transformers/stsb-xlm-r-multilingual')
 #model = SentenceTransformer('intfloat/multilingual-e5-small')
-model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+#model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+#model = SentenceTransformer('sdadas/st-polish-paraphrase-from-distilroberta')
 
 print(model.get_sentence_embedding_dimension())
 print("max_seq_length domyślnie:", model.max_seq_length)
@@ -91,7 +91,7 @@ def get_similarity_politicians(user_input, df_dataset):
     return max_similarity_per_politician.to_dict()
 
 pacyfizm_militaryzm = ['bron', 'obronnosc', 'sluzba_wojskowa']
-nacjonalizm_kosmopolityzm = ['obronnosc', 'sluzba_wojskowa', 'armia_ue', 'euro', 'cpk', 'ue', 'imigranci']
+kosmopolityzm_nacjonalizm = ['obronnosc', 'sluzba_wojskowa', 'armia_ue', 'euro', 'cpk', 'ue', 'imigranci']
 ekologia_industrializm = ['samochody', 'cpk']
 eurofederalizm_eurosceptyzm = ['euro', 'armia_ue', 'ue', 'samochody']
 progresywizm_tradycjonalizm = ['aborcja', 'eutanazja', 'invitro', 'kara_smierci', 'bron']
@@ -115,8 +115,8 @@ class User:
         self.pacyfizm_militaryzm_score = 0
         self.pacyfizm_militaryzm_answers = 0
         
-        self.nacjonalizm_kosmopolityzm_score = 0
-        self.nacjonalizm_kosmopolityzm_answers = 0
+        self.kosmopolityzm_nacjonalizm_score = 0
+        self.kosmopolityzm_nacjonalizm_answers = 0
 
         self.ekologia_industrializm_score = 0
         self.ekologia_industrializm_answers = 0
@@ -159,9 +159,9 @@ class User:
                 self.pacyfizm_militaryzm_score += user_score
                 self.pacyfizm_militaryzm_answers += 1   
     
-            if chosen_topic in nacjonalizm_kosmopolityzm:        
-                self.nacjonalizm_kosmopolityzm_score += user_score
-                self.nacjonalizm_kosmopolityzm_answers += 1   
+            if chosen_topic in kosmopolityzm_nacjonalizm:        
+                self.kosmopolityzm_nacjonalizm_score += user_score
+                self.kosmopolityzm_nacjonalizm_answers += 1   
                 
             if chosen_topic in ekologia_industrializm:        
                 self.ekologia_industrializm_score += user_score
@@ -194,8 +194,8 @@ class User:
     def display_scores(self):
         if self.pacyfizm_militaryzm_answers != 0:
             print(f'Wartość dla pacyfizm-militaryzm wynosi {self.pacyfizm_militaryzm_score/self.pacyfizm_militaryzm_answers}')
-        if self.nacjonalizm_kosmopolityzm_answers != 0:
-            print(f'Wartość dla nacjonalizm-kosmopolityzm wynosi {self.nacjonalizm_kosmopolityzm_score/self.nacjonalizm_kosmopolityzm_answers}')
+        if self.kosmopolityzm_nacjonalizm_answers != 0:
+            print(f'Wartość dla nacjonalizm-kosmopolityzm wynosi {self.kosmopolityzm_nacjonalizm_score/self.kosmopolityzm_nacjonalizm_answers}')
         if self.ekologia_industrializm_answers != 0:
             print(f'Wartość dla ekologia-industrializm wynosi {self.ekologia_industrializm_score/self.ekologia_industrializm_answers}')
         if self.eurofederalizm_eurosceptyzm_answers != 0:
@@ -269,7 +269,7 @@ def wyniki():
 
     scores = {
         'pacyfizm_militaryzm': user.pacyfizm_militaryzm_score / user.pacyfizm_militaryzm_answers if user.pacyfizm_militaryzm_answers else None,
-        'nacjonalizm_kosmopolityzm': user.nacjonalizm_kosmopolityzm_score / user.nacjonalizm_kosmopolityzm_answers if user.nacjonalizm_kosmopolityzm_answers else None,
+        'kosmopolityzm_nacjonalizm': user.kosmopolityzm_nacjonalizm_score / user.kosmopolityzm_nacjonalizm_answers if user.kosmopolityzm_nacjonalizm_answers else None,
         'ekologia_industrializm': user.ekologia_industrializm_score / user.ekologia_industrializm_answers if user.ekologia_industrializm_answers else None,
         'eurofederalizm_eurosceptyzm': user.eurofederalizm_eurosceptyzm_score / user.eurofederalizm_eurosceptyzm_answers if user.eurofederalizm_eurosceptyzm_answers else None,
         'progresywizm_tradycjonalizm': user.progresywizm_tradycjonalizm_score / user.progresywizm_tradycjonalizm_answers if user.progresywizm_tradycjonalizm_answers else None,
