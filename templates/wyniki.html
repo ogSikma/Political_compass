@@ -88,6 +88,10 @@
                     <div class="nolan-point" style="left: {{ x }}%; top: {{ y }}%;"></div>
                 {% endif %}
             </div>
+            <h2>NAJBLIŻSZE PARTIE</h2>
+            {% for name, coords in top3_parties %}
+            {{ name }}</br>
+            {% endfor %}
         </div>
     </div>
     <h1 style="text-align: center;">Twoje podobieństwo z politykami</h1>

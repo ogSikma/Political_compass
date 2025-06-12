@@ -98,6 +98,9 @@ progresywizm_tradycjonalizm = ['aborcja', 'eutanazja', 'invitro', 'kara_smierci'
 solidaryzm_liberalizm = ['osiemset', 'zus', 'wdowia']
 interwencjonizm_leseferyzm =  ['zus', 'dochodowy', 'katastralny']
 
+def distance(p1, p2):
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
 class User:
     def to_dict(self):
         return self.__dict__
@@ -282,6 +285,24 @@ def wyniki():
         'socjalizm_wolny-rynek': user.nolan_gospodarka_score / user.nolan_gospodarka_answers if user.nolan_gospodarka_answers else None
     }
 
+    parties_points = [
+        ("Platforma Obywatelska", (0.1, -0.4)),
+        ("Inicjatywa Polska", (-0.4, -0.9)),
+        ("Prawo i Sprawiedliwość", (-0.3, 0.7)),
+        ("Polska 2050", (0, -0.1)),
+        ("Polskie Stronnictwo Ludowe", (0.1, 0.3)),
+        ("Nowa Lewica", (-0.6, -0.8)),
+        ("Polska Partia Socjalistyczna", (-0.7, -0.9)),
+        ("Razem", (-0.8, -0.7)),
+        ("Nowa Nadzieja", (0.8, 0.7)),
+        ("Ruch Narodowy", (0.4, 0.8)),
+        ("Konfederacja Korony Polskiej", (0.6, 1))
+    ]
+
+    reference_point = (nolan['socjalizm_wolny-rynek'], nolan['konserwatyzm_liberalizm'])
+    similar_parties = sorted(parties_points, key=lambda party: distance(party[1], reference_point))
+    print(similar_parties)
+
     # POLITYCY --------------------------------------
     politicians = sorted(user.politicians_dict.items(), key=lambda x: x[1][0], reverse=True)[:10]
     names = [i[0] for i in politicians]
@@ -290,7 +311,7 @@ def wyniki():
     labels = [f'{name} ({party})' for name, party in zip(names,parties)]
     #create_barplot(nazwiska,podobienstwa)
 
-    return render_template('wyniki.html', scores=scores, nolan=nolan, labels=labels, percentages=similarities, parties=parties)
+    return render_template('wyniki.html', scores=scores, nolan=nolan, labels=labels, percentages=similarities, parties=parties, top3_parties = similar_parties[:3])
 
 
 

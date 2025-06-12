@@ -126,13 +126,17 @@ body {
     width: 40%;
     box-sizing: border-box;
     padding: 5px;
+    text-align: center;
+    font-size: 1vw;
+    color: black;
+    letter-spacing: 0.2vw;
 }
 
 .nolan-chart {
     position: relative;
     width: 90%;
     height: width;
-    left: 5%;              
+    left: 5%;
 }
 
 .nolan-chart img {
