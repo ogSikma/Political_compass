@@ -5,9 +5,7 @@ import pandas as pd
 import numpy as np
 import math
 import os
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, models
 from sklearn.metrics.pairwise import cosine_similarity
 from flask_session import Session
 
@@ -34,16 +32,29 @@ def CSVload_datasets_embedded(directory):
         dataset_name = f'df_{filename.replace("_embeddings.csv", "")}'
         
         globals()[dataset_name] = df
-CSVload_datasets_embedded("datasets_embeddings_stsbxlmr")
+CSVload_datasets_embedded("datasets_embeddings_polbert")
 # POLITYCY --------------------------------------
-df_politycy = pd.read_csv('politycy_embeddings_stsbxlmr.csv', encoding='utf-8', sep=';')
+df_politycy = pd.read_csv('politycy_embeddings_polbert.csv', encoding='utf-8', sep=';')
 df_politycy["embedding"] = df_politycy["embedding"].apply(lambda x: np.array(list(map(float, x.split(',')))))
 
 #załadowanie modelu
-model = SentenceTransformer('sentence-transformers/stsb-xlm-r-multilingual')
+#model = SentenceTransformer('sentence-transformers/stsb-xlm-r-multilingual')
 #model = SentenceTransformer('intfloat/multilingual-e5-small')
 #model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 #model = SentenceTransformer('sdadas/st-polish-paraphrase-from-distilroberta')
+#model = SentenceTransformer('BAAI/bge-m3')
+
+word_embedding_model = models.Transformer(
+    './polbert-fine-tune/PolBERT_trained2',
+    max_seq_length=128
+)
+pooling_model = models.Pooling(
+    word_embedding_model.get_word_embedding_dimension(),
+    pooling_mode_mean_tokens=True,
+    pooling_mode_cls_token=False,
+    pooling_mode_max_tokens=False
+)
+model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
 print(model.get_sentence_embedding_dimension())
 print("max_seq_length domyślnie:", model.max_seq_length)
